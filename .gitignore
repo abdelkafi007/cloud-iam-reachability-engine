@@ -1,0 +1,17 @@
+# Virtual environment & python caches
+venv/
+__pycache__/
+*.pyc
+
+# Terraform local state and cache
+.terraform/
+*.tfstate
+*.tfstate.*
+.terraform.lock.hcl
+
+# Bulk generated evaluation files (samples preserved in examples/)
+/recommended_policy_*.json
+
+# Local runtime data
+localstack-data/
+*.log

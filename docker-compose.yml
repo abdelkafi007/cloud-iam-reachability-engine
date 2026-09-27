@@ -1,0 +1,7 @@
+services:
+  local-aws:
+    container_name: local-aws
+    image: motoserver/moto:latest
+    ports:
+      - "5000:5000"
+    restart: unless-stopped
