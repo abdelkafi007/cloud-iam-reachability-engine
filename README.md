@@ -57,18 +57,22 @@ Furthermore, static policy analysis cannot evaluate whether granted permissions 
 * **Identity `charlie`**: Holds zero direct admin rights; granted solely `iam:CreateAccessKey` targeting `admin`.
 * **Vulnerability**: Charlie generates programmatic access keys for `admin`, usurping root control.
 * **Attack Chain**:
-  $$\text{charlie} \xrightarrow{\text{iam:CreateAccessKey}} \text{admin} \xrightarrow{\text{Action: *}} \text{ROOT\_ADMIN}$$
+  ```mermaid
+  flowchart LR
+      charlie["charlie"] -->|iam:CreateAccessKey| admin["admin"]
+      admin -->|Action: *| ROOT_ADMIN["ROOT_ADMIN"]
+  ```
 
 ---
 
 ## 3. Mathematical & Algorithmic Formulation
 
 ### 3.1 Graph Representation
-* **Vertices ($\mathcal{V}$)**: Identities (users, roles) augmented by a synthetic sink node $\text{ROOT\_ADMIN}$.
+* **Vertices ($\mathcal{V}$)**: Identities (users, roles) augmented by a synthetic sink node `ROOT_ADMIN`.
 * **Directed Edges ($\mathcal{E}$)**: A directed edge $(u, v) \in \mathcal{E}$ exists if identity $u$ possesses an action classified under the **Escalation Rules Taxonomy** targeting identity $v$.
 
 ### 3.2 Graph Traversal Complexity
-Reachability from an unprivileged identity to $\text{ROOT\_ADMIN}$ is computed using Breadth-First Search (BFS):
+Reachability from an unprivileged identity to `ROOT_ADMIN` is computed using Breadth-First Search (BFS):
 * **Time Complexity**: $\mathcal{O}(|\mathcal{V}| + |\mathcal{E}|)$
   * In-memory double-ended queue (`collections.deque`) ensures $\mathcal{O}(1)$ node de-queuing without array shifting overhead.
   * Hash set lookup ensures $\mathcal{O}(1)$ cycle and visited detection.
@@ -113,8 +117,8 @@ To evaluate scalability beyond micro-benchmarks, an enterprise topology generato
 * **Entities**: 102 active IAM principals across 5 functional departments (`devops`, `backend`, `frontend`, `data`, `finance`).
 * **Telemetry**: 2,802 asynchronous CloudTrail audit events.
 * **Injected Adversarial Vectors**:
-  * `intern_infiltrator` executing privilege escalation targeting `lead_engineer` ($\to \text{ROOT\_ADMIN}$).
-  * `rogue_contractor` executing privilege escalation targeting `chief_admin` ($\to \text{ROOT\_ADMIN}$).
+  * `intern_infiltrator` executing privilege escalation targeting `lead_engineer` (→ `ROOT_ADMIN`).
+  * `rogue_contractor` executing privilege escalation targeting `chief_admin` (→ `ROOT_ADMIN`).
 * **Execution Results**:
   * **Zero False Negatives**: Both multi-hop attack vectors intercepted in real time with exact shortest-path extraction:
     ```text
@@ -132,8 +136,8 @@ To evaluate scalability beyond micro-benchmarks, an enterprise topology generato
 ### Prerequisites
 * Linux (Fedora / Debian / Ubuntu)
 * Podman or Docker
-* Terraform $\ge 1.10$
-* Python $\ge 3.12$ with `boto3`
+* Terraform >= 1.10
+* Python >= 3.12 with `boto3`
 
 ### Step 1: Initialize Local AWS Mock & Deploy Infrastructure
 ```bash
